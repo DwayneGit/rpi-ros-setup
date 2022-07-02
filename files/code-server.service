@@ -1,0 +1,14 @@
+[Unit]
+Description=code-server
+After=network.target
+
+[Service]
+User=pi
+Group=pi
+
+WorkingDirectory=/home/pi
+Environment="PATH=/usr/bin"
+ExecStart=/home/pi/.yarn/bin/code-server
+
+[Install]
+WantedBy=multi-user.target

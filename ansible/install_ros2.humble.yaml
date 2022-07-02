@@ -1,0 +1,64 @@
+#For Ubuntu Jammy (22.04)
+- name: Install ROS2 Humble Haskell
+  hosts: rpis
+  remote_user: dwayne
+
+  tasks:
+    - name: Set locale
+      ansible.builtin.apt:
+        name: locales
+        update_cache: yes
+    - name: Ensure a locale exists
+      ansible.builtin.shell: locale-gen en_US en_US.UTF-8
+      become: true # Ensure that the highest permissions are used on the remote host
+    - name: Update locale
+      ansible.builtin.shell: update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+      become: true
+    - name: Set locale
+      ansible.builtin.apt:
+        name: software-properties-common
+    - name: Add specified repository into sources list
+      ansible.builtin.apt_repository:
+        repo: universe
+        state: present
+    - name: Install a list of packages
+      ansible.builtin.apt:
+        pkg:
+          - curl
+          - gnupg
+          - lsb-release
+    - name: Check that you can connect (GET) to a page and it returns a status 200
+      ansible.builtin.uri:
+        url: https://raw.githubusercontent.com/ros/rosdistro/master/ros.key
+        creates: ros-archive-keyring.gpg
+        dest: /usr/share/keyrings/
+    - name: add repository to source list
+      ansible.builtin.shell: echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+      become: true
+    - name: Upgrade the OS (apt-get dist-upgrade)
+      ansible.builtin.apt:
+        upgrade: dist
+        update_cache: yes
+    - name: Set locale
+      ansible.builtin.apt:
+        name: ros-humble-desktop
+#
+# sudo apt update && sudo apt install locales
+# sudo locale-gen en_US en_US.UTF-8
+# sudo update-locale LC_ALL=en_US.UTF-8 LANG=en_US.UTF-8
+# export LANG=en_US.UTF-8
+
+# # Optional (if needed): Enable universe repository
+# sudo apt install software-properties-common
+# sudo add-apt-repository universe
+
+# # add ROS 2 apt repository
+# sudo apt update && sudo apt install curl gnupg lsb-release
+# sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg
+
+# # add repository to source list
+# echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+
+# # install ros desktop
+# sudo apt update && sudo apt upgrade
+# sudo apt install ros-humble-desktop
