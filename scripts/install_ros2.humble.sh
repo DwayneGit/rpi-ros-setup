@@ -20,3 +20,5 @@ echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-a
 # install ros desktop
 sudo apt update -y && sudo apt upgrade -y
 sudo apt install -y ros-humble-desktop
+
+sudo apt install python3-colcon-common-extensions
