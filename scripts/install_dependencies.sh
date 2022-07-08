@@ -1,5 +1,7 @@
 # install
 sudo apt install curl wget python3-pip git gcc g++ make python-setuptools python3-setuptools
+sudo apt remove brltty
+sudo gpasswd --add robodev dialout 
 
 wget https://github.com/joan2937/pigpio/archive/master.zip
 unzip master.zip
